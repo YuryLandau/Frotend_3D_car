@@ -1,0 +1,9 @@
+.car {
+    &-image {
+        width: 100px;
+    }
+
+    &-direction {
+        transform: rotate(90deg);
+    }
+}

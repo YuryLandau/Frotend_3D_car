@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "body-parser": "^2.2.0",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "sass": "^1.87.0"
   },
   "devDependencies": {
     "lerna": "8.2.2"
