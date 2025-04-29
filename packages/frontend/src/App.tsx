@@ -12,6 +12,7 @@ function App() {
   const { t, i18n } = useTranslation()
   const [count, setCount] = useState<number>(0)
 
+
   return (
     <>
       <div>
@@ -29,7 +30,7 @@ function App() {
           })}
         </div>
       </div>
-      <CityMap />
+      <CityMap position={[51.505, -0.09]} angle={0} />
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           {t('count_is')}{count}
