@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import './App.scss'
+import { CityMap } from './components/CityMap'
 
 const lngs: Record<'en' | 'pt', { nativeName: string }> = {
   en: { nativeName: 'English' },
@@ -28,7 +29,7 @@ function App() {
           })}
         </div>
       </div>
-      <h1>Vite + React</h1>
+      <CityMap />
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
           {t('count_is')}{count}
