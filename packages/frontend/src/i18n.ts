@@ -13,14 +13,27 @@ export default i18next
         resources: {
             en: {
                 translation: {
-                    home_text: "Edit <code>src/App.tsx</code> and save to test HMR",
-                    count_is: "Counter is "
+                    sidebar_title: "Select a route",
+                    vehicle_picture: "Vehicle photo",
+                    route_title: "Route",
+                    route_distance: "Distance: ",
+                    route_stops: "Stops: ",
+                    route_duration: "Duration: ",
+                    start_route: "Start route",
+                    meters: "meters"
+
                 }
             },
             pt: {
                 translation: {
-                    home_text: "Edite <code>src/App.tsx</code> e salve para testar o HMR",
-                    count_is: "O contador é "
+                    sidebar_title: "Selecione uma rota",
+                    vehicle_picture: "Foto do veículo",
+                    route_title: "Rota",
+                    route_distance: "Distância: ",
+                    route_stops: "Paradas: ",
+                    route_duration: "Duração: ",
+                    start_route: "Iniciar corrida",
+                    meters: "metros"
                 }
             }
         }
