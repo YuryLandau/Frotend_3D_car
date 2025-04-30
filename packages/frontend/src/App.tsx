@@ -1,7 +1,10 @@
-import { useState } from 'react'
-import { Trans, useTranslation } from 'react-i18next'
-import './App.scss'
-import { CityMap } from './components/CityMap'
+import { LatLngExpression } from 'leaflet';
+import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import selectedCourses from '../../backend/frontend_data_gps.json';
+import './App.scss';
+import { CityMap } from './components/CityMap';
+import { useVehicleAnimator } from './hooks/useVehicleAnimation';
 
 const lngs: Record<'en' | 'pt', { nativeName: string }> = {
   en: { nativeName: 'English' },
@@ -11,12 +14,24 @@ const lngs: Record<'en' | 'pt', { nativeName: string }> = {
 function App() {
   const { t, i18n } = useTranslation()
   const [count, setCount] = useState<number>(0)
+  setTimeout(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, 100); // só pra UX mesmo, pode ignorar
 
+  const currentCourse = selectedCourses.courses[count]
+
+  const pathCoordinates: [LatLngExpression, LatLngExpression] = currentCourse.gps.map((point) => [
+    point.latitude,
+    point.longitude,
+  ]);
+
+  const { position, angle } = useVehicleAnimator(currentCourse.gps);
 
   return (
     <>
       <div>
         <div>
+          {/* Mapear as linguagens */}
           {Object.keys(lngs).map((lng: string) => {
             return <button
               type='submit'
@@ -30,22 +45,23 @@ function App() {
           })}
         </div>
       </div>
-      <CityMap position={[51.505, -0.09]} angle={0} />
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          {t('count_is')}{count}
-        </button>
-        <p>
-          <Trans>
 
-            Edit <code>src/App.tsx</code> and save to test HMR
-          </Trans>
+      {/* Implementando mapa */}
+      <CityMap position={position} angle={angle} pathCoordinates={pathCoordinates} />
 
-        </p>
+      <div className='paths-container'>
+
+        {
+          selectedCourses.courses.map((course, index) => {
+            return (
+              <button key={index} onClick={() => { setCount(index) }}>
+                <span>Course {index}</span>
+              </button>
+            )
+          })
+        }
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+
     </>
   )
 }
