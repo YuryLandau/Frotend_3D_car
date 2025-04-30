@@ -45,7 +45,6 @@ export const CityMap = ({ position, angle, pathCoordinates, stops }: CityMapType
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {/* <FitBounds coordinates={pathCoordinates} /> */}
 
       {/* Traçado do percurso */}
       {
@@ -59,7 +58,10 @@ export const CityMap = ({ position, angle, pathCoordinates, stops }: CityMapType
           }}
         />
       }
+
       <Marker position={position} icon={carIcon} />
+
+      {/* Marcadores das paradas  */}
       {stops?.map((coord, i) => (
         <Marker
           key={`stop-${i}`}
