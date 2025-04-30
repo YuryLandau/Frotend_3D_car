@@ -1,12 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-
-type GpsPoint = {
-  latitude: number;
-  longitude: number;
-  direction: number;
-  acquisition_time: string;
-  speed?: number;
-};
+import { GpsPoint } from '../types';
 
 function interpolate(a: number, b: number, t: number): number {
   return a + (b - a) * t;

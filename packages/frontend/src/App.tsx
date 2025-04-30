@@ -1,10 +1,10 @@
 import { LatLngExpression } from 'leaflet';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import selectedCourses from '../../backend/frontend_data_gps.json';
 import './App.scss';
 import { CityMap } from './components/CityMap';
 import { useVehicleAnimator } from './hooks/useVehicleAnimation';
+import { GpsRequestRoot } from './types';
 
 const lngs: Record<'en' | 'pt', { nativeName: string }> = {
   en: { nativeName: 'English' },
@@ -14,23 +14,28 @@ const lngs: Record<'en' | 'pt', { nativeName: string }> = {
 function App() {
   const { t, i18n } = useTranslation()
   const [course, setCourse] = useState<number>(0)
+  const [coursesData, setCoursesData] = useState<GpsRequestRoot | null>(null);;
 
-  setTimeout(() => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }, 100); // só pra UX mesmo, pode ignorar
-
-  const currentCourse = selectedCourses.courses[course]
+  const currentCourse = coursesData?.courses[course]
   const stopCoordinates: [number, number][] =
     currentCourse?.stop_points?.coordinates
-      ?.filter(([lng, lat]) => lng !== null && lat !== null)
-      .map(([lng, lat]) => [lat as number, lng as number]) ?? [];
+      ?.filter((coord): coord is [number, number, number, unknown?, unknown?] =>
+        typeof coord[0] === 'number' && typeof coord[1] === 'number'
+      )
+      .map(([lng, lat]) => [lat, lng]) ?? [];
 
-  const pathCoordinates: LatLngExpression[] = currentCourse.gps.map((point) => [
-    point.latitude,
-    point.longitude,
-  ]);
+  const pathCoordinates: LatLngExpression[] =
+    currentCourse?.gps.map((point) => [point.latitude, point.longitude]) ?? [];
+
   const [isPlaying, setIsPlaying] = useState(false);
-  const { position, angle } = useVehicleAnimator(currentCourse.gps, isPlaying);
+
+  const { position, angle } = useVehicleAnimator(currentCourse?.gps ?? [], isPlaying);
+
+  useEffect(() => {
+    fetch('http://localhost:5000/api/courses')
+      .then(res => res.json())
+      .then(data => setCoursesData(data));
+  }, []);
 
   useEffect(() => {
     setIsPlaying(false);
@@ -65,7 +70,8 @@ function App() {
       <div className='paths-container'>
 
         {
-          selectedCourses.courses.map((course, index) => {
+          coursesData &&
+          coursesData.courses.map((course, index) => {
             return (
               <button key={index} onClick={() => { setCourse(index) }}>
                 <span>Course {index}</span>
