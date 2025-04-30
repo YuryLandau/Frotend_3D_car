@@ -1,4 +1,5 @@
 
+import { useTranslation } from "react-i18next"
 import { GpsRequestRoot } from "../../types"
 import { formatDuration } from "../../utils/formatDuration"
 
@@ -10,25 +11,28 @@ interface MenuContainerTypes {
 }
 
 function MenuContainer({ coursesData, isPlaying, setCourse, setIsPlaying }: MenuContainerTypes) {
+
+    const { t } = useTranslation()
+
     return (
         <div className='paths-container'>
-            <span>Selecione uma rota</span>
+            <span>{t("sidebar_title")}</span>
             {
                 coursesData &&
                 coursesData.courses.map((course, index) => {
                     return (
                         <button key={index} onClick={() => { setCourse(index) }}>
-                            <div className="course-card">
+                            <div className="route-card">
                                 <div className="card-car-picture">
-                                    <img src={coursesData.vehicle.picture.address} alt="Vehicle picture" />
+                                    <img src={coursesData.vehicle.picture.address} alt={t("vehicle_picture")} />
                                 </div>
 
                                 <div className="card-informations">
 
-                                    <span className="route-title">Rota {index + 1}</span>
-                                    <span className="route-distance">Distância: {course.distance}</span>
-                                    <span className="route-stops">Paradas: {course.stops}</span>
-                                    <span className="route-stops">Duração: {formatDuration(course.duration)}</span>
+                                    <span className="route-title">{t("route_title")}{index + 1}</span>
+                                    <span className="route-distance">{t("route_distance")}{course.distance} {t("meters")}</span>
+                                    <span className="route-stops">{t("route_stops")}{course.stops}</span>
+                                    <span className="route-duration">{t("route_duration")}{formatDuration(course.duration)}</span>
                                 </div>
                             </div>
                         </button>
@@ -36,7 +40,7 @@ function MenuContainer({ coursesData, isPlaying, setCourse, setIsPlaying }: Menu
                 })
             }
             <button className="start-travel" onClick={() => setIsPlaying(true)} disabled={isPlaying}>
-                Iniciar a viagem
+                {t("start_route")}
             </button>
         </div>
     )

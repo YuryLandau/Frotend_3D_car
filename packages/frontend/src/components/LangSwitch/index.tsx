@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next"
 
 function LangSwitch() {
-    const { t, i18n } = useTranslation()
+    const { i18n } = useTranslation()
 
     const lngs: Record<'en' | 'pt', { nativeName: string }> = {
         en: { nativeName: 'English' },
