@@ -1,18 +1,13 @@
 import { LatLngExpression } from 'leaflet';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import './App.scss';
 import { CityMap } from './components/CityMap';
+import LangSwitch from './components/LangSwitch';
+import PathsContainer from './components/PathsContainer';
 import { useVehicleAnimator } from './hooks/useVehicleAnimation';
 import { GpsRequestRoot } from './types';
 
-const lngs: Record<'en' | 'pt', { nativeName: string }> = {
-  en: { nativeName: 'English' },
-  pt: { nativeName: 'Português' }
-}
-
 function App() {
-  const { t, i18n } = useTranslation()
   const [course, setCourse] = useState<number>(0)
   const [coursesData, setCoursesData] = useState<GpsRequestRoot | null>(null);;
 
@@ -42,22 +37,16 @@ function App() {
   }, [course]);
 
   return (
-    <>
-      <div>
-        <div>
-          {/* Mapear as linguagens */}
-          {Object.keys(lngs).map((lng: string) => {
-            return <button
-              type='submit'
-              key={lng}
-              disabled={i18n.resolvedLanguage === lng}
-              onClick={() => {
-                i18n.changeLanguage(lng)
-              }}>
-              {lngs[lng as keyof typeof lngs].nativeName}
-            </button>
-          })}
-        </div>
+    <main>
+      <div className='sidebar-container'>
+        <LangSwitch />
+
+        <PathsContainer
+          coursesData={coursesData}
+          isPlaying={isPlaying}
+          setCourse={setCourse}
+          setIsPlaying={setIsPlaying}
+        />
       </div>
 
       {/* Implementando mapa */}
@@ -67,24 +56,7 @@ function App() {
         pathCoordinates={pathCoordinates}
         stops={stopCoordinates} />
 
-      <div className='paths-container'>
-
-        {
-          coursesData &&
-          coursesData.courses.map((course, index) => {
-            return (
-              <button key={index} onClick={() => { setCourse(index) }}>
-                <span>Course {index}</span>
-              </button>
-            )
-          })
-        }
-        <button onClick={() => setIsPlaying(true)} disabled={isPlaying}>
-          Iniciar a viagem
-        </button>
-      </div>
-
-    </>
+    </main>
   )
 }
 

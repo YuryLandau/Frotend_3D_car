@@ -777,3 +777,9 @@ svg.leaflet-image-layer.leaflet-interactive path {
         print-color-adjust: exact;
     }
 }
+
+@media (max-width: 768px) {
+    .leaflet-container {
+        min-height: 50vh;
+    }
+}

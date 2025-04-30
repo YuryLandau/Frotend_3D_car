@@ -1,9 +1,66 @@
-.car {
-    &-image {
-        width: 100px;
+main {
+    width: 100vw;
+    height: 100vh;
+    padding: 2rem;
+    gap: 1rem;
+    display: flex;
+    box-sizing: border-box;
+
+    .sidebar-container {
+        min-width: 350px;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        overflow-y: auto;
+        min-height: 300px;
+        height: calc(100% - 1rem);
+
+        .paths-container {
+            display: flex;
+            flex-direction: column;
+            gap: .5rem;
+
+            .course-card {
+                display: flex;
+                gap: 1rem;
+
+                .card-car-picture {
+                    img {
+
+                        min-width: 50px;
+                        max-width: 90px;
+                    }
+                }
+
+                .card-informations {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: flex-start;
+                    font-size: 14px;
+                }
+            }
+
+            button.start-travel {
+                margin-top: 1rem;
+            }
+        }
     }
 
-    &-direction {
-        transform: rotate(90deg);
+    @media (max-width: 768px) {
+        & {
+            flex-direction: column-reverse;
+            padding: .5rem;
+
+            .sidebar-container {
+
+                height: calc(70% - 1rem);
+                min-height: auto;
+            }
+
+            .map {
+                min-height: 50vh;
+            }
+        }
     }
 }
