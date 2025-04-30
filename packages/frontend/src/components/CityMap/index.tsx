@@ -1,6 +1,6 @@
-import { DivIcon } from 'leaflet';
+import { DivIcon, LatLngExpression } from 'leaflet';
 import { useMemo } from 'react';
-import { MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import { MapContainer, Marker, Polyline, Popup, TileLayer } from 'react-leaflet';
 import './carMarker.scss';
 import './leaflet.scss';
 
@@ -14,7 +14,13 @@ function getFrameIndex(angle: number): number {
   return Math.round((normalized / 360) * TOTAL_FRAMES) % TOTAL_FRAMES;
 }
 
-export const CityMap = ({ position, angle }: { position: [number, number]; angle: number }) => {
+interface CityMapType {
+  position: LatLngExpression,
+  angle: number
+  pathCoordinates?: [LatLngExpression, LatLngExpression]
+}
+
+export const CityMap = ({ position, angle, pathCoordinates }: CityMapType) => {
 
 
   const carIcon = useMemo(() => {
@@ -31,8 +37,6 @@ export const CityMap = ({ position, angle }: { position: [number, number]; angle
     });
   }, [angle]);
 
-
-
   return (
     <MapContainer style={{
       width: '500px',
@@ -42,7 +46,20 @@ export const CityMap = ({ position, angle }: { position: [number, number]; angle
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {/* <Marker position={position} icon={carIcon} /> */}
+      {/* <FitBounds coordinates={pathCoordinates} /> */}
+
+      {/* Traçado do percurso */}
+      {
+        pathCoordinates &&
+        <Polyline
+          positions={pathCoordinates}
+          pathOptions={{
+            color: 'royalblue',
+            weight: 5,
+            opacity: 0.7,
+          }}
+        />
+      }
       <Marker position={position} icon={carIcon}>
         <Popup>
           A pretty CSS3 popup. <br /> Easily customizable.
