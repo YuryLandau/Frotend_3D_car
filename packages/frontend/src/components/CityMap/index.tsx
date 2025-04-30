@@ -38,8 +38,8 @@ export const CityMap = ({ position, angle, pathCoordinates, stops }: CityMapType
 
   return (
     <MapContainer style={{
-      width: '500px',
-      height: '300px'
+      width: '100%',
+      height: '100%'
     }} center={position} zoom={13} scrollWheelZoom={false}>
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
