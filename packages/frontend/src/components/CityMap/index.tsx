@@ -1,7 +1,6 @@
 import { DivIcon, LatLngExpression } from 'leaflet';
 import { useMemo } from 'react';
-import { MapContainer, Marker, Polyline, Popup, TileLayer } from 'react-leaflet';
-import './carMarker.scss';
+import { MapContainer, Marker, Polyline, TileLayer } from 'react-leaflet';
 import './leaflet.scss';
 
 const FRAME_WIDTH = 160
@@ -17,11 +16,11 @@ function getFrameIndex(angle: number): number {
 interface CityMapType {
   position: LatLngExpression,
   angle: number
-  pathCoordinates?: [LatLngExpression, LatLngExpression]
+  pathCoordinates?: LatLngExpression[];
+  stops?: [number, number][];
 }
 
-export const CityMap = ({ position, angle, pathCoordinates }: CityMapType) => {
-
+export const CityMap = ({ position, angle, pathCoordinates, stops }: CityMapType) => {
 
   const carIcon = useMemo(() => {
 
@@ -60,11 +59,19 @@ export const CityMap = ({ position, angle, pathCoordinates }: CityMapType) => {
           }}
         />
       }
-      <Marker position={position} icon={carIcon}>
-        <Popup>
-          A pretty CSS3 popup. <br /> Easily customizable.
-        </Popup>
-      </Marker>
+      <Marker position={position} icon={carIcon} />
+      {stops?.map((coord, i) => (
+        <Marker
+          key={`stop-${i}`}
+          position={coord}
+          icon={new DivIcon({
+            className: 'stop-marker',
+            html: '🅿️',
+            iconSize: [20, 20],
+            iconAnchor: [10, 10],
+          })}
+        />
+      ))}
     </MapContainer>
   )
 }

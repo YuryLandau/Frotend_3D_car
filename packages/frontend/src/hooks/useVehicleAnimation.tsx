@@ -18,20 +18,34 @@ function interpolatePosition(a: GpsPoint, b: GpsPoint, t: number): [number, numb
   return [lat, lng];
 }
 
-export function useVehicleAnimator(gpsPoints: GpsPoint[]) {
-  const [position, setPosition] = useState<[number, number]>([-23.963223, -46.28054]);
-  const [angle, setAngle] = useState(0);
+export function useVehicleAnimator(gpsPoints: GpsPoint[], isPlaying: boolean) {
+  const [position, setPosition] = useState<[number, number]>([
+    gpsPoints?.[0]?.latitude ?? -23.963223,
+    gpsPoints?.[0]?.longitude ?? -46.28054,
+  ]);
+  const [angle, setAngle] = useState(gpsPoints?.[0]?.direction ?? 0);
   const [isAnimating, setIsAnimating] = useState(false);
 
   const indexRef = useRef(0);
   const startTimeRef = useRef<number | null>(null);
   const requestRef = useRef<number | null>(null);
 
+  // Zera quando o gpsPoints muda
   useEffect(() => {
-    if (!gpsPoints || gpsPoints.length < 2) return;
+    indexRef.current = 0;
+    startTimeRef.current = null;
+    setPosition([
+      gpsPoints?.[0]?.latitude ?? 0,
+      gpsPoints?.[0]?.longitude ?? 0,
+    ]);
+    setAngle(gpsPoints?.[0]?.direction ?? 0);
+    setIsAnimating(false);
+  }, [gpsPoints]);
+
+  useEffect(() => {
+    if (!isPlaying || !gpsPoints || gpsPoints.length < 2) return;
 
     setIsAnimating(true);
-    indexRef.current = 0;
     startTimeRef.current = null;
 
     const animate = (timestamp: number) => {
@@ -39,13 +53,16 @@ export function useVehicleAnimator(gpsPoints: GpsPoint[]) {
       const current = gpsPoints[i];
       const next = gpsPoints[i + 1];
 
-      if (!next) return;
+      if (!next) {
+        setIsAnimating(false);
+        return;
+      }
 
       if (startTimeRef.current === null) startTimeRef.current = timestamp;
 
       const t1 = new Date(current.acquisition_time).getTime();
       const t2 = new Date(next.acquisition_time).getTime();
-      const duration = Math.max(t2 - t1, 500); // mínimo de 0.5s por frame
+      const duration = Math.max(t2 - t1, 500);
 
       const elapsed = timestamp - startTimeRef.current;
       const progress = Math.min(elapsed / duration, 1);
@@ -72,7 +89,7 @@ export function useVehicleAnimator(gpsPoints: GpsPoint[]) {
     return () => {
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
     };
-  }, [gpsPoints]);
+  }, [gpsPoints, isPlaying]);
 
   return { position, angle, isAnimating };
 }

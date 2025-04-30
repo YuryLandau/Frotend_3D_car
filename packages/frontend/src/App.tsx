@@ -1,5 +1,5 @@
 import { LatLngExpression } from 'leaflet';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import selectedCourses from '../../backend/frontend_data_gps.json';
 import './App.scss';
@@ -13,19 +13,28 @@ const lngs: Record<'en' | 'pt', { nativeName: string }> = {
 
 function App() {
   const { t, i18n } = useTranslation()
-  const [count, setCount] = useState<number>(0)
+  const [course, setCourse] = useState<number>(0)
+
   setTimeout(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, 100); // só pra UX mesmo, pode ignorar
 
-  const currentCourse = selectedCourses.courses[count]
+  const currentCourse = selectedCourses.courses[course]
+  const stopCoordinates: [number, number][] =
+    currentCourse?.stop_points?.coordinates
+      ?.filter(([lng, lat]) => lng !== null && lat !== null)
+      .map(([lng, lat]) => [lat as number, lng as number]) ?? [];
 
-  const pathCoordinates: [LatLngExpression, LatLngExpression] = currentCourse.gps.map((point) => [
+  const pathCoordinates: LatLngExpression[] = currentCourse.gps.map((point) => [
     point.latitude,
     point.longitude,
   ]);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const { position, angle } = useVehicleAnimator(currentCourse.gps, isPlaying);
 
-  const { position, angle } = useVehicleAnimator(currentCourse.gps);
+  useEffect(() => {
+    setIsPlaying(false);
+  }, [course]);
 
   return (
     <>
@@ -47,19 +56,26 @@ function App() {
       </div>
 
       {/* Implementando mapa */}
-      <CityMap position={position} angle={angle} pathCoordinates={pathCoordinates} />
+      <CityMap
+        position={position}
+        angle={angle}
+        pathCoordinates={pathCoordinates}
+        stops={stopCoordinates} />
 
       <div className='paths-container'>
 
         {
           selectedCourses.courses.map((course, index) => {
             return (
-              <button key={index} onClick={() => { setCount(index) }}>
+              <button key={index} onClick={() => { setCourse(index) }}>
                 <span>Course {index}</span>
               </button>
             )
           })
         }
+        <button onClick={() => setIsPlaying(true)} disabled={isPlaying}>
+          Iniciar a viagem
+        </button>
       </div>
 
     </>

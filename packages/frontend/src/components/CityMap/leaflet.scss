@@ -1,4 +1,6 @@
 /* required styles */
+@use './carMarker.scss';
+@use './stopMarker.scss';
 
 .leaflet-pane,
 .leaflet-tile,
