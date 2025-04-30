@@ -22,6 +22,7 @@
     "test": "echo Testing backend",
     "test-jest": "node ./__tests__/backend.test.js"
   },
+  "type": "module",
   "bugs": {
     "url": "https://github.com/YuryLandau/Frotend_3D_car/issues"
   },
